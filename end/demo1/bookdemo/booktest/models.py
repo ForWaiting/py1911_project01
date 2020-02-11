@@ -14,6 +14,8 @@ class Book(models.Model):
     pub_date = models.DateField(default="1983-06-01")
     price = models.FloatField(default=0)
     pass
+    def __str__(self):
+        return self.title
 
 class Hero(models.Model):
     """
@@ -25,3 +27,10 @@ class Hero(models.Model):
     # book是一对多中的外键 on_delete代表删除主表数据时如何做，models.CASCADE 代表级联效应  删除主键连同外键一起删除
     book = models.ForeignKey(Book,on_delete=models.CASCADE)
     pass
+    def __str__(self):
+        return self.name
+# django orm 关联查询
+# 多方Hero  一方Book
+# 1.多找一， 多方对象，关系字段       exp：h1.book
+# 2. 一找多，  一方对象，小写多方类名_set.all()   exp : b1.hero_set.all()
+
