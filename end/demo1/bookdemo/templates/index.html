@@ -3,16 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <title>首页</title>
+    <link rel="stylesheet" href="/static/css/main.css">
 </head>
 <body>
-    <h1>这里是首页</h1>
-    <h2>书籍:</h2>
-    <ul>
-        {% for book in books %}
+    
+    <div class="center">
+        <img src="/static/img/onepiece1.png" alt="onepiece">
+    </div>
+
+    <div class="contain">
+        <h1>这里是首页</h1>
+        <h2>书籍:</h2>
+        <ul>
+            {% for book in books %}
             <a href="/booktest/detail/{{book.id}}">
                 <li>{{book.id}}--{{book.title}}--{{book.price}}--{{book.pub_date}}</li>
             </a>
-        {% endfor %}
-    </ul>
+            {% endfor %}
+        </ul>
+    </div>
 </body>
 </html>
