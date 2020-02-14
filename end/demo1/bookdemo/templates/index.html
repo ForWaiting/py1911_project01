@@ -13,14 +13,21 @@
 
     <div class="contain">
         <h1>这里是首页</h1>
-        <h2>书籍:</h2>
+        <h2>总书籍:{{books.count}}本</h2>
         <ul>
             {% for book in books %}
             {# <a href="/detail/{{book.id}}"><li>{{book.id}}--{{book.title}}--{{book.price}}--{{book.pub_date}}--{{book.author}}</li></a> #}
-            <a href="{% url 'booktest:detail' book.id %}"><li>{{book.id}}--{{book.title}}--{{book.price}}--{{book.pub_date}}--{{book.author}}</li></a>
-
+            <li>
+                <a href="{% url 'booktest:detail' book.id %}">{{book.id}}.{{book.title}}——{{book.price}}元——{{book.pub_date}}——{{book.author}}</a>
+                <a href="{% url 'booktest:deletebook' book.id %}" style="color:green"> &emsp; 删除</a>
+                <br>
+                <br>
+            </li>
             {% endfor %}
         </ul>
+
+        <h2><a href="{% url 'booktest:addbook' %}">添加书籍</a></h2>
+
     </div>
 </body>
 </html>
