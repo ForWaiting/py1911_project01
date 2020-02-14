@@ -23,5 +23,4 @@ urlpatterns = [
     url(r'^addhero/(\d+)$',views.addhero,name='addhero'),
     url(r'^edithero/(\d+)$',views.edithero,name='edithero'),
     url(r'^addbook/$',views.addbook,name='addbook'),
-
 ]
