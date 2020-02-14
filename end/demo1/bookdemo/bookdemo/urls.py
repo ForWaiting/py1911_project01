@@ -35,5 +35,5 @@ urlpatterns = [
     # path('json/', jsondata),
     # path('index',index),
     # 使用path 将booktest 的路由进行包含
-    path('booktest/', include('booktest.urls'))
+    path('', include('booktest.urls',namespace='booktest'))
 ]

@@ -5,6 +5,10 @@
     <title>详情页</title>
 </head>
 <body>
+
+    <!-- 普通html注释 在网页中F12会显示   -->
+    {# django模板注释 不会显示 #}
+
     <h1>这里是详情页</h1>
     <div>
         <h2>书名：{{book.title}}</h2>
@@ -14,6 +18,7 @@
             {% endfor %}
         </ul>
     </div>
-    <a href="/booktest/index/">返回列表页</a>
+    {# <a href="/">返回列表页</a> #}
+    <a href="{% url 'booktest:index' %}">返回列表页</a>
 </body>
 </html>

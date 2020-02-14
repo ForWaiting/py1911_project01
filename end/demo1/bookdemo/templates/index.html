@@ -16,9 +16,9 @@
         <h2>书籍:</h2>
         <ul>
             {% for book in books %}
-            <a href="/booktest/detail/{{book.id}}">
-                <li>{{book.id}}--{{book.title}}--{{book.price}}--{{book.pub_date}}</li>
-            </a>
+            {# <a href="/detail/{{book.id}}"><li>{{book.id}}--{{book.title}}--{{book.price}}--{{book.pub_date}}--{{book.author}}</li></a> #}
+            <a href="{% url 'booktest:detail' book.id %}"><li>{{book.id}}--{{book.title}}--{{book.price}}--{{book.pub_date}}--{{book.author}}</li></a>
+
             {% endfor %}
         </ul>
     </div>
