@@ -29,7 +29,7 @@ class Hero(models.Model):
     gender = models.CharField(max_length=6, choices=(("male", "男"), ("female", "女")), default="male")
     content = models.CharField(max_length=100)
     # book是一对多中的外键 on_delete代表删除主表数据时如何做，models.CASCADE 代表级联效应  删除主键连同外键一起删除
-    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='heros')
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
     pass
 
     def __str__(self):
