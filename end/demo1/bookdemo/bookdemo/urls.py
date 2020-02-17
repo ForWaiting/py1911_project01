@@ -13,10 +13,12 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf.global_settings import MEDIA_ROOT
 from django.contrib import admin
 from django.urls import path,include
 from django.http import HttpResponse
-
+# 使用媒体资源导入包
+from django.views.static import serve
 #路由  网址 每一个网址均需要绑定视图函数  视图函数给予页面返回
 # 每一个路由都需要和视图函数绑定
 # MVT V 视图函数 3个作用 接受请求 处理数据 返回相应
@@ -29,6 +31,7 @@ from django.http import HttpResponse
 #     return HttpResponse("这里是首页")
 
 # 总的路由匹配文件
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     # path('list/', list),
@@ -36,5 +39,7 @@ urlpatterns = [
     # path('index',index),
     # 使用path 将booktest 的路由进行包含
     path('', include('booktest.urls',namespace='booktest')),
-    path('polls/',include('polls.urls',namespace='polls'))
+    path('polls/',include('polls.urls',namespace='polls')),
+    path('download/',include('download.urls',namespace='download')),
+
 ]

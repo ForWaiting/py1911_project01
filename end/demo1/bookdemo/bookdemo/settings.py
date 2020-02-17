@@ -24,8 +24,9 @@ SECRET_KEY = '4=w$y+k_8bdz4oj@fy=judyll0l8*tsc+tb(r+vlx6r5!-0qx2'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+# DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -39,7 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # 想要使用的应用名
     'booktest',
-    'polls'
+    'polls',
+    'download'
 ]
 
 MIDDLEWARE = [
@@ -124,3 +126,5 @@ USE_TZ = True
 STATIC_URL = '/static/'
 # 需要配置静态文件所处位置
 STATICFILES_DIRS = [os.path.join(BASE_DIR,'static')]
+
+
