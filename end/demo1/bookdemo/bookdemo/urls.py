@@ -36,5 +36,5 @@ urlpatterns = [
     # path('index',index),
     # 使用path 将booktest 的路由进行包含
     path('', include('booktest.urls',namespace='booktest')),
-    path('',include('polls.urls',namespace='polls'))
+    path('polls/',include('polls.urls',namespace='polls'))
 ]

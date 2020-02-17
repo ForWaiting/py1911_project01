@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>投票信息</title>
+</head>
+<body>
+    <h1>投票信息：</h1>
+    <h3>投票选项</h3>
+    <div class="container">
+        <form action="" method="post">
+            <ul>
+                {% for vote in vote_info.voteoption_set.all %}
+                    {% if forloop.counter == 1 %}
+                        <li><input type="radio" name="voted" checked value= "{{vote.content}}">{{vote.content}}</li>
+                    {% else %}
+                        <li><input type="radio" name="voted" value= "{{vote.content}}">{{vote.content}}</li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+            <input type="submit" value="投票">
+            <a href="{% url 'polls:poll_index' %}">返回</a>
+        </form>
+    </div>
+</body>
+</html>

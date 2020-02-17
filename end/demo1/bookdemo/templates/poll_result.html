@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>投票结果</title>
+</head>
+<body>
+    <h1>投票信息：{{vote_info.vote_title}}</h1>
+    <h3>当前得票信息</h3>
+    <ul>
+        {% for vote in vote_info.voteoption_set.all %}
+        <li>{{vote.content}}--票数:&nbsp;{{vote.vote_num}}</li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'polls:poll_index' %}">返回</a>
+</body>
+</html>

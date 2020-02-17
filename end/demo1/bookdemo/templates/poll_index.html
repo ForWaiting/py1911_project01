@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+    <link rel="stylesheet" href="/static/polls_css/main.css">
+</head>
+<body>
+    <div class="con">
+        <h1>投票信息汇总</h1>
+        <ol>
+            {% for poll in polls %}
+            <li>
+                <a href="{% url 'polls:poll_detail' poll.id %}">{{poll.vote_title}}</a>
+            </li>
+            {% endfor %}
+        </ol>
+
+    </div>
+</body>
+</html>
