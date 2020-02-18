@@ -1,14 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>投票信息</title>
-</head>
-<body>
+{% extends 'base.html' %}
+
+{% block body %}
     <h1>投票信息：</h1>
     <h3>投票选项</h3>
     <div class="container">
         <form action="" method="post">
+            {% csrf_token %}
             <ul>
                 {% for vote in vote_info.voteoption_set.all %}
                     {% if forloop.counter == 1 %}
@@ -22,5 +19,4 @@
             <a href="{% url 'polls:poll_index' %}">返回</a>
         </form>
     </div>
-</body>
-</html>
+{% endblock %}

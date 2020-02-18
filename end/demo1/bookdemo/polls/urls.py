@@ -16,6 +16,9 @@ urlpatterns = [
     url(r'^$',views.poll_index,name='poll_index'),
     url(r'^polldetail/(\d+)$',views.poll_detail, name='poll_detail'),
     url(r'^pollresult/(\d+)$',views.poll_result, name='poll_result'),
+    url(r'^login/$',views.login,name='login'),
+    url(r'^regist/$',views.regist,name='regist'),
+    url(r'^logout/$',views.logout,name='logout')
 
     # 视图类CBV路由
     # url(r'^$', views.PollIndexView.as_view(), name='poll_index'),

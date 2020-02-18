@@ -1,11 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>首页</title>
-    <link rel="stylesheet" href="/static/polls_css/main.css">
-</head>
-<body>
+{% extends 'base.html' %}
+
+{% block body %}
     <div class="con">
         <h1>投票信息汇总</h1>
         <ol>
@@ -15,7 +10,18 @@
             </li>
             {% endfor %}
         </ol>
-
+        {% comment %}
+        {{name|safe}}
+        {% autoescape off %}
+            {{name}}长度：{{name|length}}
+        {% endautoescape %}
+        <br>
+        {% for item in items %}
+            循环
+        {% empty %}
+            items为空
+        {% endfor %}
+        {% endcomment %}
     </div>
-</body>
-</html>
+   {# {% include "other.html" %} #}
+{% endblock %}
