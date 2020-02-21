@@ -1,9 +1,9 @@
-from django.contrib.auth import authenticate,login as lin,logout as lot
+from django.contrib.auth import authenticate, login as lin, logout as lot
 from django.http import HttpResponse
 from django.shortcuts import render, reverse, redirect
 from .models import VoteInfo, VoteOption, User
 from django.views.generic import View, TemplateView, ListView, CreateView, DetailView, DeleteView, UpdateView
-
+from .forms import LoginForm,RegistForm
 
 # Create your views here.
 # View类为所有的视图响应基类
@@ -13,7 +13,7 @@ from django.views.generic import View, TemplateView, ListView, CreateView, Detai
 def poll_index(request):
     polls = VoteInfo.objects.all()
     items = None
-    return render(request, 'poll_index.html', {'polls': polls,'name':'<h2>二级标题hzf<h2>','items':items})
+    return render(request, 'poll_index.html', {'polls': polls, 'name': '<h2>二级标题hzf<h2>', 'items': items})
 
 
 # 基于CBV形式实现主页
@@ -38,12 +38,12 @@ def poll_detail(request, voteid):
     if request.method == "GET":
         if request.user and request.user.username != "":
             if vote_info in request.user.voteinfo.all():
-                url = reverse('polls:poll_result',args=(voteid))
+                url = reverse('polls:poll_result', args=(voteid))
                 return redirect(to=url)
             else:
                 return render(request, 'poll_detail.html', {'vote_info': vote_info})
         else:
-            url = reverse('polls:login')+"?next=/polls/polldetail/"+voteid
+            url = reverse('polls:login') + "?next=/polls/polldetail/" + voteid
             return redirect(to=url)
     elif request.method == "POST":
         vote_option = vote_info.voteoption_set.all()
@@ -55,6 +55,7 @@ def poll_detail(request, voteid):
                 break
         url = reverse("polls:poll_result", args=(voteid,))
         return redirect(to=url)
+
 
 # 基于CBV形式实现详情页
 class PollDetailView(View):
@@ -79,46 +80,73 @@ def poll_result(request, voteid):
     return render(request, 'poll_result.html', {'vote_info': vote_info})
     pass
 
+
 # 基于CBV形式实现结果页
 class PollResultView(View):
     def get(self, request, voteid):
         vote_info = VoteInfo.objects.get(id=voteid)
         return render(request, 'poll_result.html', {'vote_info': vote_info})
 
+
 def login(request):
     if request.method == 'GET':
-        return render(request,'login.html')
+        lf = LoginForm()
+        # 在html自己编写表单
+        # return render(request, 'login.html')
+        return render(request,'login.html',{'lf':lf})
     elif request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        user = authenticate(username=username,password=password)
-        if user:
-            lin(request,user)
-            next = request.GET.get('next')
-            if next:
-                url = next
+        lf = LoginForm(data=request.POST)
+        if lf.is_valid():
+            username = lf.cleaned_data['username']
+            password = lf.cleaned_data['password']
+            # username = request.POST.get('username')
+            # password = request.POST.get('password')
+            user = authenticate(username=username, password=password)
+            if user:
+                lin(request, user)
+                next = request.GET.get('next')
+                if next:
+                    url = next
+                else:
+                    url = reverse('polls:poll_index')
+                return redirect(to=url)
             else:
-                url = reverse('polls:poll_index')
-            return redirect(to=url)
+                # url = reverse('polls:login')
+                # return redirect(to=url)
+                return render(request, 'login.html',{'error': '密码或用户名不匹配','lf':lf})
         else:
-            url = reverse('polls:login')
-            return redirect(to=url)
+            return HttpResponse('未知错误')
+
 def regist(request):
     if request.method == 'GET':
-        return render(request,'regist.html')
+        rf = RegistForm()
+        return render(request,'regist.html',{'rf':rf})
+        # return render(request, 'regist.html')
     else:
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        password2 = request.POST.get('password2')
-        if len(User.objects.filter(username=username))> 0:
-            return HttpResponse('用户名已经存在')
-        else:
-            if password != password2:
-                return HttpResponse('两次密码不一致')
+        rf = RegistForm(request.POST)
+        if rf.is_valid():
+            # username = request.POST.get('username')
+            # password = request.POST.get('password')
+            # password2 = request.POST.get('password2')
+            username = rf.cleaned_data['username']
+            password = rf.cleaned_data['password']
+            password2 = rf.cleaned_data['password2']
+            if len(User.objects.filter(username=username)) > 0:
+                # return HttpResponse('用户名已经存在')
+                return render(request, 'regist.html', {'error': '用户名已经存在','rf':rf})
             else:
-                User.objects.create_user(username=username,password=password)
-                url = reverse('polls:login')
-                return redirect(to=url)
+                if password != password2:
+                    # return HttpResponse('两次密码不一致')
+                    return render(request, 'regist.html', {'error': '两次密码不一致','rf':rf})
+                else:
+                    User.objects.create_user(username=username, password=password)
+                    # rf.save()
+                    url = reverse('polls:login')
+                    return redirect(to=url)
+        else:
+            return HttpResponse('用户名已经存在')
+
+
 def logout(request):
     lot(request)
     url = reverse('polls:poll_index')
