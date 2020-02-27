@@ -19,3 +19,11 @@ class Good(models.Model):
 
     def __str__(self):
         return self.name
+
+class GoodImg(models.Model):
+    # 媒体资源
+    img = models.ImageField(upload_to='goodimg',verbose_name='商品展示图')
+    good = models.ForeignKey(Good,on_delete=models.CASCADE,verbose_name='商品',related_name='imgs')
+
+
+

@@ -13,19 +13,25 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.views.static import serve
+from django.conf.urls import url
 from django.contrib import admin
 from django.urls import path, include
+
+from drfend.settings import MEDIA_ROOT
 from shop.views import *
 # 引入DRF自带的路由类
 from rest_framework import routers
 from rest_framework.documentation import include_docs_urls
+
 router = routers.DefaultRouter()
 # 可以通过router 默认路由注册资源
 router.register('categorys',CategoryViewSets)
 router.register('goods',GoodViewSets)
-
+router.register('goodimgs',GoodImgsViewSets)
 urlpatterns = [
     path('admin/', admin.site.urls),
+    url(r'^media/(?P<path>.*)$', serve, {'document_root': MEDIA_ROOT}),
     # 配置RestFul路由
     path('api/v1/',include(router.urls)),
     # API文档地址

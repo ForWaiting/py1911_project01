@@ -83,6 +83,27 @@ class CategorySerializer1(serializers.ModelSerializer):
         # fields = "__all__"
         fields = ('id','name','goods')
 
+class GoodImgsSerializer(serializers.Serializer):
+    img = serializers.ImageField()
+    good = serializers.CharField(source='good.name')
+
+    # def validate_good(self, data):
+    #     try:
+    #         g = Good.objects.get(name=data)
+    #         return g
+    #     except:
+    #         raise serializers.ValidationError('输入的商品不存在')
+
+    def validate(self, attrs):
+        try:
+            g = Good.objects.get(name = attrs['good']['name'])
+            attrs['good'] = g
+        except:
+            raise serializers.ValidationError('商品不存在')
+        return attrs
+    def create(self, validated_data):
+        instance = GoodImg.objects.create(**validated_data)
+        return instance
 
 class GoodSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=20, min_length=2, error_messages={
@@ -90,6 +111,7 @@ class GoodSerializer(serializers.Serializer):
         'min_length': '最小2个字符'
     })
     category = CategorySerializer(label='分类')
+    imgs = GoodImgsSerializer(label='图片',many=True,read_only=True)
 
     def validate_category(self,category):
         """
@@ -115,3 +137,7 @@ class GoodSerializer(serializers.Serializer):
         instance = Good.objects.create(**validated_data)
         instance.save()
         return instance
+
+    def update(self, instance, validated_data):
+        pass
+

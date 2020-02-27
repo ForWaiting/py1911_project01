@@ -121,7 +121,10 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-# 此处
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR,'media')
+MEDIAFIELS_DIRS = [os.path.join(BASE_DIR,'media')]
+# 此处对
 REST_FRAMEWORK = {
     # Schema
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.AutoSchema',
