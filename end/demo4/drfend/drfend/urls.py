@@ -26,7 +26,7 @@ from rest_framework.documentation import include_docs_urls
 
 router = routers.DefaultRouter()
 # 可以通过router 默认路由注册资源
-router.register('categorys',CategoryViewSets)
+router.register('categorys',CategoryViewSets2)
 router.register('goods',GoodViewSets)
 router.register('goodimgs',GoodImgsViewSets)
 urlpatterns = [
@@ -34,6 +34,19 @@ urlpatterns = [
     url(r'^media/(?P<path>.*)$', serve, {'document_root': MEDIA_ROOT}),
     # 配置RestFul路由
     path('api/v1/',include(router.urls)),
+    # 基于函数的视图引用
+    # url(r'^categorylist/$',category_list,name='categorylist'),
+    # url(r'^categorydetail/(\d+)/$',category_detail,name='categorydetail'),
+    # 基于类的视图
+    # url(r'^categorylist/$',CategoryListView.as_view(),name='categorylist'),
+    # url(r'^categorydetail/(\d+)/$',CategoryDetailView.as_view(),name='categorydetail'),
+
+    # url(r'^categorylist/$',CategoryListView.as_view(),name='categorylist'),
+    # url(r'^categorydetail/(?P<pk>\d+)/$',CategoryDetailView.as_view(),name='categorydetail'),
+
+    # url(r'^categorys/$',CategoryViewSets2.as_view({'get':'list','post':'create'})),
+    # url(r'^categorys/(?P<pk>\d+)/$',CategoryViewSets2.as_view({'get':'retrieve','put':'update','patch':'update','delete':'destroy'})),
+
     # API文档地址
     path('api/v1/docs',include_docs_urls(title='RestFulAPI',description='RestFulAPI v1')),
     # 在
