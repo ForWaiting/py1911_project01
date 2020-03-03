@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
 
@@ -25,5 +25,12 @@ class GoodImg(models.Model):
     img = models.ImageField(upload_to='goodimg',verbose_name='商品展示图')
     good = models.ForeignKey(Good,on_delete=models.CASCADE,verbose_name='商品',related_name='imgs')
 
+# 构建一个用户类
+class User(AbstractUser):
+    telephone = models.CharField(max_length=11,verbose_name='手机号')
 
-
+# 商品订单
+class Order(models.Model):
+    user = models.ForeignKey(User,on_delete=models.CASCADE,verbose_name='用户')
+    goods = models.ManyToManyField(Good,verbose_name='商品')
+    pass

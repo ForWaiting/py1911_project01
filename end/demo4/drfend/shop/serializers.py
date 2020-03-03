@@ -20,6 +20,7 @@ class GoodSerializer1(serializers.ModelSerializer):
         model = Good
         # fields = "__all__"
         fields = ('id','name','desc','category')
+
 class CustomSerializer(serializers.RelatedField):
     """
     自定义序列化类
@@ -141,3 +142,35 @@ class GoodSerializer(serializers.Serializer):
     def update(self, instance, validated_data):
         pass
 
+# 用户序列化类
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        # fields = '__all__'
+        # 排除某些信息
+        exclude = ['user_permissions']
+
+    def validate(self, attrs):
+        from django.contrib.auth import hashers
+        attrs['password'] = hashers.make_password(attrs['password'])
+        return attrs
+# 用户注册序列化类
+class UserRegistSerialize(serializers.Serializer):
+    username = serializers.CharField(max_length=10,min_length=3,error_messages={'required':'用户名必填'})
+    password = serializers.CharField(max_length=10,min_length=3,write_only=True)
+    password2 = serializers.CharField(max_length=10,min_length=3,write_only=True)
+
+    def validate_password2(self,data):
+        if data != self.initial_data['password']:
+            raise serializers.ValidationError('密码不一致')
+        else:
+            return data
+
+    # def validate(self, attrs):
+        # if attrs['password'] != attrs['password2']:
+        #     raise serializers.ValidationError('密码不一致')
+        # del attrs['password2']
+        # return attrs
+
+    def create(self, validated_data):
+        return User.objects.create_user(username=validated_data.get('username'),email=validated_data.get('email'),password=validated_data.get('password'))
