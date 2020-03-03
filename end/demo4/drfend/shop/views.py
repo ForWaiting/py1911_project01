@@ -171,7 +171,7 @@ class GoodImgsViewSets(viewsets.ModelViewSet):
     serializer_class = GoodImgsSerializer
 
 # 创建用户视图类
-class UserViewSets(viewsets.ModelViewSet):
+class UserViewSets1(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
@@ -181,3 +181,15 @@ class UserViewSets(viewsets.ModelViewSet):
         serialize.is_valid(raise_exception=True)
         serialize.save()
         return Response(serialize.data, status=status.HTTP_201_CREATED)
+
+class UserViewSets(viewsets.GenericViewSet,mixins.CreateModelMixin,mixins.RetrieveModelMixin,mixins.UpdateModelMixin,mixins.DestroyModelMixin):
+    '''
+    声明用户资源类 用户操作：获取个人信息，更新个人信息，删除账户，创建账户
+    扩展出action 路由，
+    '''
+    queryset = User.objects.all()
+
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return UserRegistSerialize
+        return UserSerializer
