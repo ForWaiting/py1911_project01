@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'shop',
     'rest_framework',
+    'rest_framework_jwt',
 ]
 
 MIDDLEWARE = [
@@ -128,6 +129,21 @@ MEDIAFIELS_DIRS = [os.path.join(BASE_DIR,'media')]
 REST_FRAMEWORK = {
     # Schema
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.AutoSchema',
-}
 
+
+    #默认权限控制   每一个http方法都可以有对应的权限配置
+    #全局配置   优先级高于视图类中的配置
+    'DEFAULT_PERMISSION_CLASSES':[
+      'rest_framework.permissions.AllowAny',
+    ],
+    #全局认证 优先级高于视图中的配置
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        # 使用 jwt认证 json web Token 不需要在数据库中存储数据，通过算法对数据加密
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        # 默认使用Session认证
+        'rest_framework.authentication.SessionAuthentication',
+
+        'rest_framework.authentication.BasicAuthentication',
+    ],
+}
 AUTH_USER_MODEL = 'shop.User'

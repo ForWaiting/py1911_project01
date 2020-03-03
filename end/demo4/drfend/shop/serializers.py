@@ -175,3 +175,9 @@ class UserRegistSerialize(serializers.Serializer):
 
     def create(self, validated_data):
         return User.objects.create_user(username=validated_data.get('username'),email=validated_data.get('email'),password=validated_data.get('password'))
+
+class OrderSerialize(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = '__all__'
+

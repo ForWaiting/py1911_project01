@@ -23,13 +23,15 @@ from shop.views import *
 # 引入DRF自带的路由类
 from rest_framework import routers
 from rest_framework.documentation import include_docs_urls
+from rest_framework_jwt.views import obtain_jwt_token
 
 router = routers.DefaultRouter()
 # 可以通过router 默认路由注册资源
-router.register('categorys',CategoryViewSets2)
+router.register('categorys',CategoryViewSets)
 router.register('goods',GoodViewSets)
 router.register('goodimgs',GoodImgsViewSets)
 router.register('users',UserViewSets)
+router.register('orders',OrderViewSets)
 urlpatterns = [
     path('admin/', admin.site.urls),
     url(r'^media/(?P<path>.*)$', serve, {'document_root': MEDIA_ROOT}),
@@ -47,7 +49,8 @@ urlpatterns = [
 
     # url(r'^categorys/$',CategoryViewSets2.as_view({'get':'list','post':'create'})),
     # url(r'^categorys/(?P<pk>\d+)/$',CategoryViewSets2.as_view({'get':'retrieve','put':'update','patch':'update','delete':'destroy'})),
-
+    # 根据提供的用户名 密码 获取token
+    url(r'^obtain_jwt_token/$',obtain_jwt_token),
     # API文档地址
     path('api/v1/docs',include_docs_urls(title='RestFulAPI',description='RestFulAPI v1')),
     # 在
