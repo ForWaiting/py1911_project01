@@ -14,6 +14,8 @@ from rest_framework import mixins
 from . import permissions as mypermissions
 from .throttling import MyAnon,MyUser
 from .pagination import MyPagination
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
 # Create your views here.
 
 
@@ -165,6 +167,12 @@ class CategoryViewSets(viewsets.ModelViewSet):
     throttle_classes = [MyUser, MyAnon]
     # 自定义显示页码
     pagination_class = MyPagination
+    # 局部过滤配置
+    filter_backends = [DjangoFilterBackend,filters.SearchFilter,filters.OrderingFilter]
+    # 定义过滤字段
+    filterset_fields = ['name']
+    search_fields = ['name']
+    ordering_fields = ['id']
     # 用户未登录不显示分类列表，优先级高于全局配置
     # permission_classes = [permissions.IsAdminUser]
 
@@ -179,6 +187,7 @@ class CategoryViewSets(viewsets.ModelViewSet):
 class GoodViewSets(viewsets.ModelViewSet):
     queryset = Good.objects.all()
     serializer_class = GoodSerializer
+    filterset_fields = ['name']
 
 
 class GoodImgsViewSets(viewsets.ModelViewSet):

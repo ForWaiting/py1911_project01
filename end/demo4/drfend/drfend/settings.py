@@ -40,13 +40,17 @@ INSTALLED_APPS = [
     'shop',
     'rest_framework',
     'rest_framework_simplejwt',
+    'django_filters',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
+
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -148,13 +152,16 @@ REST_FRAMEWORK = {
     'DEFAULT_THROTTLE_CLASSES':['rest_framework.throttling.AnonRateThrottle',
                                 'rest_framework.throttling.UserRateThrottle',],
     'DEFAULT_THROTTLE_RATES':{
-        'user':'10/day',
-        'anon':'5/day',
+        'user':'100/day',
+        'anon':'50/day',
     },
     # 配置页码
     # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 2,
+
+    #全局过滤
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
 }
 # 自定义用户名
 AUTH_USER_MODEL = 'shop.User'
@@ -162,3 +169,4 @@ AUTH_USER_MODEL = 'shop.User'
 # 自定义认证类  应用名.文件名.认证类名
 AUTHENTICATION_BACKENDS = ('shop.authbackend.MyLoginBackend',)
 
+CORS_ORIGIN_ALLOW_ALL = True
