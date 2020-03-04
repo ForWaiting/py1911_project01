@@ -1,5 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from rest_framework import viewsets, status, permissions
+from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
+
 from .models import *
 from .serializers import *
 from django.http import HttpResponse
@@ -10,7 +12,8 @@ from rest_framework.views import APIView
 from rest_framework import generics
 from rest_framework import mixins
 from . import permissions as mypermissions
-
+from .throttling import MyAnon,MyUser
+from .pagination import MyPagination
 # Create your views here.
 
 
@@ -158,6 +161,10 @@ class CategoryViewSets(viewsets.ModelViewSet):
     """
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+    # 自定义访问次数
+    throttle_classes = [MyUser, MyAnon]
+    # 自定义显示页码
+    pagination_class = MyPagination
     # 用户未登录不显示分类列表，优先级高于全局配置
     # permission_classes = [permissions.IsAdminUser]
 
@@ -219,12 +226,3 @@ class OrderViewSets(viewsets.ModelViewSet):
             return [mypermissions.OrdersPermission()]
         else:
             return [permissions.IsAdminUser()]
-
-
-# http方法                          混合类关键字                   action关键字
-# GET列表                           List                          get
-# POST创建对象                       Create                       create
-# GET 单个对象                       Retrieve                     retrieve
-# PUT 修改对象提供全属性              Update                       update
-# PATCH 修改对象提供部分属性          Update                       partial_update
-# DELETE 删除对象                    Destroy                      destroy

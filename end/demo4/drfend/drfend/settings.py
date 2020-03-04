@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'shop',
     'rest_framework',
-    'rest_framework_jwt',
+    'rest_framework_simplejwt',
 ]
 
 MIDDLEWARE = [
@@ -139,11 +139,26 @@ REST_FRAMEWORK = {
     #全局认证 优先级高于视图中的配置
     'DEFAULT_AUTHENTICATION_CLASSES': [
         # 使用 jwt认证 json web Token 不需要在数据库中存储数据，通过算法对数据加密
-        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
         # 默认使用Session认证
         'rest_framework.authentication.SessionAuthentication',
 
         'rest_framework.authentication.BasicAuthentication',
     ],
+    'DEFAULT_THROTTLE_CLASSES':['rest_framework.throttling.AnonRateThrottle',
+                                'rest_framework.throttling.UserRateThrottle',],
+    'DEFAULT_THROTTLE_RATES':{
+        'user':'10/day',
+        'anon':'5/day',
+    },
+    # 配置页码
+    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 2,
 }
+# 自定义用户名
 AUTH_USER_MODEL = 'shop.User'
+
+# 自定义认证类  应用名.文件名.认证类名
+AUTHENTICATION_BACKENDS = ('shop.authbackend.MyLoginBackend',)
+
