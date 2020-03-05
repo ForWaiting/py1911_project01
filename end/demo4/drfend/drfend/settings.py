@@ -50,7 +50,6 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     # 'django.middleware.csrf.CsrfViewMiddleware',
-
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -145,20 +144,20 @@ REST_FRAMEWORK = {
         # 使用 jwt认证 json web Token 不需要在数据库中存储数据，通过算法对数据加密
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         # 默认使用Session认证
-        'rest_framework.authentication.SessionAuthentication',
+        # 'rest_framework.authentication.SessionAuthentication',
 
-        'rest_framework.authentication.BasicAuthentication',
+        # 'rest_framework.authentication.BasicAuthentication',
     ],
     'DEFAULT_THROTTLE_CLASSES':['rest_framework.throttling.AnonRateThrottle',
                                 'rest_framework.throttling.UserRateThrottle',],
     'DEFAULT_THROTTLE_RATES':{
-        'user':'100/day',
-        'anon':'50/day',
+        'user':'1000/day',
+        'anon':'500/day',
     },
     # 配置页码
     # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 2,
+    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    # 'PAGE_SIZE': 2,
 
     #全局过滤
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
@@ -168,5 +167,5 @@ AUTH_USER_MODEL = 'shop.User'
 
 # 自定义认证类  应用名.文件名.认证类名
 AUTHENTICATION_BACKENDS = ('shop.authbackend.MyLoginBackend',)
-
+# 跨域问题
 CORS_ORIGIN_ALLOW_ALL = True

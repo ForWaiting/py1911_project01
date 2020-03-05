@@ -166,7 +166,7 @@ class CategoryViewSets(viewsets.ModelViewSet):
     # 自定义访问次数
     throttle_classes = [MyUser, MyAnon]
     # 自定义显示页码
-    pagination_class = MyPagination
+    # pagination_class = MyPagination
     # 局部过滤配置
     filter_backends = [DjangoFilterBackend,filters.SearchFilter,filters.OrderingFilter]
     # 定义过滤字段

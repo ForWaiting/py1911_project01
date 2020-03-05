@@ -21,6 +21,28 @@ class GoodSerializer1(serializers.ModelSerializer):
         # fields = "__all__"
         fields = ('id','name','desc','category')
 
+class GoodImgsSerializer(serializers.Serializer):
+    img = serializers.ImageField()
+    good = serializers.CharField(source='good.name')
+
+    # def validate_good(self, data):
+    #     try:
+    #         g = Good.objects.get(name=data)
+    #         return g
+    #     except:
+    #         raise serializers.ValidationError('输入的商品不存在')
+
+    def validate(self, attrs):
+        try:
+            g = Good.objects.get(name = attrs['good']['name'])
+            attrs['good'] = g
+        except:
+            raise serializers.ValidationError('商品不存在')
+        return attrs
+    def create(self, validated_data):
+        instance = GoodImg.objects.create(**validated_data)
+        return instance
+
 class CustomSerializer(serializers.RelatedField):
     """
     自定义序列化类
@@ -33,6 +55,42 @@ class CustomSerializer(serializers.RelatedField):
         """
         return str(value.id)+'--'+value.name+'--'+value.desc
 
+class GoodSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=20, min_length=2, error_messages={
+        'max_length': '最大20个中文字符',
+        'min_length': '最小2个字符'
+    })
+    # category = CategorySerializer(label='分类')
+    imgs = GoodImgsSerializer(label='图片',many=True,read_only=True)
+
+    def validate_category(self,category):
+        """
+        处理category
+        :param category: 处理的原始值
+        :return: 返回新值
+        """
+        try:
+            Category.objects.get(name = category['name'])
+        except:
+            raise serializers.ValidationError('输入的分类名不存在')
+        return category
+
+    def validate(self, attrs):
+        try:
+            c = Category.objects.get(name=attrs['category']['name'])
+        except:
+            c = Category.objects.create(name = attrs['category']['name'])
+        attrs['category'] = c
+        return attrs
+
+    def create(self, validated_data):
+        instance = Good.objects.create(**validated_data)
+        instance.save()
+        return instance
+
+    def update(self, instance, validated_data):
+        pass
+
 class CategorySerializer(serializers.Serializer):
     """
     序列化类决定了模型序列化细节
@@ -42,7 +100,7 @@ class CategorySerializer(serializers.Serializer):
         'max_length':'最多10个中文字符',
         'min_length':'最少2个中文字符',
     })
-
+    goods = GoodSerializer(many=True,read_only=True)
     def create(self, validated_data):
         """
         通过重写create方法来创建模型方式
@@ -83,64 +141,6 @@ class CategorySerializer1(serializers.ModelSerializer):
         model = Category
         # fields = "__all__"
         fields = ('id','name','goods')
-
-class GoodImgsSerializer(serializers.Serializer):
-    img = serializers.ImageField()
-    good = serializers.CharField(source='good.name')
-
-    # def validate_good(self, data):
-    #     try:
-    #         g = Good.objects.get(name=data)
-    #         return g
-    #     except:
-    #         raise serializers.ValidationError('输入的商品不存在')
-
-    def validate(self, attrs):
-        try:
-            g = Good.objects.get(name = attrs['good']['name'])
-            attrs['good'] = g
-        except:
-            raise serializers.ValidationError('商品不存在')
-        return attrs
-    def create(self, validated_data):
-        instance = GoodImg.objects.create(**validated_data)
-        return instance
-
-class GoodSerializer(serializers.Serializer):
-    name = serializers.CharField(max_length=20, min_length=2, error_messages={
-        'max_length': '最大20个中文字符',
-        'min_length': '最小2个字符'
-    })
-    category = CategorySerializer(label='分类')
-    imgs = GoodImgsSerializer(label='图片',many=True,read_only=True)
-
-    def validate_category(self,category):
-        """
-        处理category
-        :param category: 处理的原始值
-        :return: 返回新值
-        """
-        try:
-            Category.objects.get(name = category['name'])
-        except:
-            raise serializers.ValidationError('输入的分类名不存在')
-        return category
-
-    def validate(self, attrs):
-        try:
-            c = Category.objects.get(name=attrs['category']['name'])
-        except:
-            c = Category.objects.create(name = attrs['category']['name'])
-        attrs['category'] = c
-        return attrs
-
-    def create(self, validated_data):
-        instance = Good.objects.create(**validated_data)
-        instance.save()
-        return instance
-
-    def update(self, instance, validated_data):
-        pass
 
 # 用户序列化类
 class UserSerializer(serializers.ModelSerializer):
