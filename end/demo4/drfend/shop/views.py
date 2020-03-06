@@ -16,8 +16,15 @@ from .throttling import MyAnon,MyUser
 from .pagination import MyPagination
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
+from rest_framework_simplejwt.authentication import JWTAuthentication
 # Create your views here.
 
+
+@api_view(["GET"])
+def getuserinfo(request):
+    user = JWTAuthentication().authenticate(request)
+    seria = UserSerializer(instance=user[0])
+    return Response(seria.data,status=status.HTTP_200_OK)
 
 class CategoryListView(generics.ListCreateAPIView):
     queryset = Category.objects.all()

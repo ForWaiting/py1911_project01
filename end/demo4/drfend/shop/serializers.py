@@ -144,6 +144,7 @@ class CategorySerializer1(serializers.ModelSerializer):
 
 # 用户序列化类
 class UserSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
     class Meta:
         model = User
         # fields = '__all__'
@@ -153,6 +154,7 @@ class UserSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         from django.contrib.auth import hashers
         if attrs.get('password'):
+            print(attrs['password'])
             attrs['password'] = hashers.make_password(attrs['password'])
         return attrs
 # 用户注册序列化类

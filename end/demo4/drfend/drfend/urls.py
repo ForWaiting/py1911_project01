@@ -24,7 +24,6 @@ from shop.views import *
 from rest_framework import routers
 from rest_framework.documentation import include_docs_urls
 from rest_framework_simplejwt.views import token_obtain_pair,token_refresh
-
 router = routers.DefaultRouter()
 # 可以通过router 默认路由注册资源
 router.register('categorys',CategoryViewSets)
@@ -32,6 +31,8 @@ router.register('goods',GoodViewSets)
 router.register('goodimgs',GoodImgsViewSets)
 router.register('users',UserViewSets)
 router.register('orders',OrderViewSets)
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     url(r'^media/(?P<path>.*)$', serve, {'document_root': MEDIA_ROOT}),
@@ -52,6 +53,7 @@ urlpatterns = [
     # 根据提供的用户名 密码 获取token
     url(r'^tokenlogin/$',token_obtain_pair,name='login'),
     url(r'^refresh/$',token_refresh,name='refresh'),
+    url(r'^getuserinfo/$',getuserinfo,name='getuserinfo'),
     # API文档地址
     path('api/v1/docs',include_docs_urls(title='RestFulAPI',description='RestFulAPI v1')),
     # 在
