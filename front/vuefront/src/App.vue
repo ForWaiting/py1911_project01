@@ -1,12 +1,48 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+      <router-link to="/">首页</router-link> |
+	  <span  v-if="!islog" >
+		<router-link to="/login/">登录</router-link>|
+		<router-link to="/regist/">注册</router-link>
+	  </span>
+	  
+	  <span v-else >
+	  		<router-link to="/usercenter/">用户:{{$jsCookie.get('username')}}</router-link>|
+	  		<span @click="logout">退出</span>
+	  </span>
+	  
+	  
     </div>
     <router-view/>
   </div>
 </template>
+
+<script>
+	export default{
+		data(){
+			return{
+				
+			}
+		},
+		computed:{
+			islog(){
+				// return this.$store.getters.getLog
+				return this.$store.state.islog
+			}
+		},
+		methods:{
+			logout(){
+				this.$router.push('/')
+				this.$jsCookie.remove('username')
+				this.$jsCookie.remove('userinfo')
+				this.$jsCookie.remove('refresh')
+				this.$jsCookie.remove('access')
+				this.$store.commit('setLog',false)
+			}
+		}
+	}
+</script>
 
 <style lang="less">
 #app {
