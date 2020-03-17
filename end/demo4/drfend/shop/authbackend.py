@@ -12,6 +12,7 @@
 from django.contrib.auth import backends
 from shop.models import User
 from django.db.models import Q
+
 class MyLoginBackend(backends.BaseBackend):
     def authenticate(self, request, **kwargs):
         """
