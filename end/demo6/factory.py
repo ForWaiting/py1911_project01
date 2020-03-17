@@ -21,6 +21,7 @@ def create__app():
     app.register_blueprint(bookbp)
     app.register_blueprint(userbp)
 
+
     # @app.before_first_request
     # def first_request_d0_something():
     #     import sqlite3
@@ -44,4 +45,17 @@ def create__app():
     def myupperfun(value):
         return value.capitalize()
 
+    # app.config["MAIL_SERVER"] = "smtp.163.com"
+    # app.config["MAIL_PORT"] = 25
+    # app.config["MAIL_USERNAME"] = "huangzhenfang2019@163.com"
+    # app.config["MAIL_PASSWORD"] = "MIJLSURZTEZLGPAK"
+    # app.config['MAIL_DEFAULT_SENDER'] = '草帽海贼团<huangzhenfang2019@163.com>'
+
+    app.config["MAIL_SERVER"] = "smtp.163.com"
+    app.config["MAIL_PORT"] = 25
+    app.config["MAIL_USERNAME"] = "huangzhenfang2019@163.com"
+    app.config["MAIL_PASSWORD"] = "MIJLSURZTEZLGPAK"
+    app.config['MAIL_DEFAULT_SENDER'] = '路飞<huangzhenfang2019@163.com>'
+    # 设置邮箱实例
+    mail.init_app(app)
     return app

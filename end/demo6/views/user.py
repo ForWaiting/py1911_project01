@@ -12,7 +12,7 @@ from werkzeug.security import generate_password_hash,check_password_hash
 
 userbp = Blueprint('user',__name__)
 
-# 4绑定路由与试图函数
+# 4绑定路由与试图函数，进行账户注册
 @userbp.route('/login', methods=['GET', 'POST'])
 def login():
     # 5 flask中请求的对象封装在request中 request代表请求
@@ -26,31 +26,32 @@ def login():
         return render_template('login.html', cl=categoryList, u=user)
     elif request.method == 'POST':
         # 6 从form中提取表单参数
-        username = request.form.get('username')
+        email = request.form.get('email')
         password = request.form.get('password')
         error = None
-
-        if not username:
+        if not email:
             error = '用户名必须填写'
         elif not password:
             error = '密码必须填写'
 
-        # 9使用flash 可以将参数传入下一个请求，此处将error写入下一次请求
+        # 9使用flash 可以将参数传入下一个请求，此处将error写入下一次请求，
+        # 是将flash传入的参数写入session，前端提示信息从浏览器session中获取参数
         if error:
             flash({
                 'error': error,
-                'username': username,
+                'email': email,
                 'password': password,
             })
             return redirect('/login')
         else:
+            # 使用with 会自动关闭游标以及数据库
             with sqlite3.connect('demo6.db') as con:
                 cur = con.cursor()
-                cur.execute('select * from user where username = ?',(username,))
+                cur.execute('select * from user where email = ?',(email,))
                 r = cur.fetchall()
                 if len(r) <= 0:
                     flash({
-                        'error':'用户名错误'
+                        'error':'邮箱错误'
                     })
                     return redirect('/login')
                 else:
@@ -61,19 +62,24 @@ def login():
                         })
                         return (redirect('/login'))
                     else:
-                        return '登陆成功%s--%s' % (username, password)
-
-
+                        if r[0][5] == 0:
+                            flash({
+                                'error':'用户尚未激活'
+                            })
+                            return redirect('/login')
+                        else:
+                            return '登陆成功%s--%s' % (email, password)
+# 进行账户注册
 @userbp.route('/regist', methods=['GET', 'POST'])
 def regist():
     if request.method == "GET":
         return render_template("regist.html")
     elif request.method == "POST":
-        username = request.form.get("username")
+        email = request.form.get("email")
         password = request.form.get("password")
         password2 = request.form.get("password2")
         error = None
-        if not username:
+        if not email:
             error = "用户名不能为空"
         elif not password:
             error = "密码不能为空"
@@ -85,16 +91,38 @@ def regist():
             flash(error)
             return redirect('/regist')
         else:
+            # 查找数据库是否存在当前账户
             with sqlite3.connect('demo6.db') as con:
                 cur = con.cursor()
-                cur.execute('select * from user where username = ?',(username,))
+                cur.execute('select * from user where email = ?',(email,))
                 r = cur.fetchall()
                 if len(r)>0:
-                    flash('用户名已存在')
+                    flash({
+                        'error':'邮箱已存在'
+                    })
                     return redirect('/regist')
                 else:
+                    # 进行账户注册
                     securityPassword = generate_password_hash(password)
-                    cur.execute('insert into user (username,password) values(?,?)',(username,securityPassword))
+                    cur.execute('insert into user (email,password) values(?,?)',(email,securityPassword))
                     con.commit()
-                return '成功注册'
-
+                    # 获取注册并未激活账户
+                    with sqlite3.connect('demo6.db') as con:
+                        cur = con.cursor()
+                        cur.execute('select * from user where email = ?', (email,))
+                        r = cur.fetchall()
+                        print('当前账户',r)
+                        from flask_mail import Message
+                        from .utils import mail
+                        msg = Message(subject='你好，激活账户点击下方', recipients=[email])
+                        msg.html  = "<a href='http://127.0.0.1:5000/active/%s' >点击激活</a>"%(r[0][0],)
+                        mail.send(msg)
+                        return '成功注册,请前往邮箱激活账户'
+# 对帐户进行查找激活
+@userbp.route('/active/<user_id>')
+def activeuser(user_id):
+    with sqlite3.connect('demo6.db') as con:
+        cur = con.cursor()
+        cur.execute('update user set is_active=1 where id = ?',(user_id,))
+        con.commit()
+    return redirect('/login')

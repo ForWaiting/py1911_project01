@@ -8,3 +8,4 @@
 """
 from .user import userbp
 from .book import bookbp
+from .utils import mail
