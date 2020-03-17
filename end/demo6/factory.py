@@ -9,7 +9,7 @@
 # flask 应用工厂
 # 1引入Flask
 from flask import Flask, request, render_template, flash
-from templates import *
+
 from werkzeug.utils import redirect
 def create__app():
     app = Flask(__name__)
@@ -27,7 +27,7 @@ def create__app():
         if request.method == 'GET':
             # 7使用render_template渲染jinja2模板 模板文件夹和python模块同级目录
             # 8 静态资源static 用法同template ，render_template第二参数 为传入模板的数据
-
+            flash({})
             categoryList = [{'ID': 101, 'Name': '汽车'}, {'ID': 102, 'Name': '房产'}]
             user = [{'Name': 'Luffy'}]
             return render_template('login.html', cl=categoryList, u=user)
@@ -36,6 +36,7 @@ def create__app():
             username = request.form.get('username')
             password = request.form.get('password')
             error = None
+
             if not username:
                 error = '用户名必须填写'
             elif not password:
@@ -43,7 +44,11 @@ def create__app():
 
             # 9使用flash 可以将参数传入下一个请求，此处将error写入下一次请求
             if error:
-                flash(error, category='error')
+                flash({
+                    'error': error,
+                    'username': username,
+                    'password': password,
+                })
                 return redirect('/login')
             else:
                 return '这里是提取参数页面%s--%s' % (username, password)
@@ -71,13 +76,17 @@ def create__app():
             else:
                 return '成功注册'
 
+
     @app.route('/')
     def index():
         bookList = [{'ID': 101, 'Name': 'Luffy'}, {'ID': 102, 'Name': 'Nami'}, {'ID': 103, 'Name': 'Zoro'}]
-        return render_template('index.html', bookList=bookList)
+        return render_template('index.html', bookList=bookList,u='hzf')
 
     @app.errorhandler(404)
     def page_not_found(error):
         return render_template('404.html')
 
+    @app.add_template_filter
+    def myupperfun(value):
+        return value.capitalize()
     return app
