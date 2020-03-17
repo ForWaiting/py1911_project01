@@ -6,8 +6,9 @@
 @Email   : huangzhenfang2017@163.com
 @Software: PyCharm
 """
+import sqlite3
 from flask import  request, render_template, flash,redirect,Blueprint
-
+from werkzeug.security import generate_password_hash,check_password_hash
 
 userbp = Blueprint('user',__name__)
 
@@ -43,7 +44,24 @@ def login():
             })
             return redirect('/login')
         else:
-            return '这里是提取参数页面%s--%s' % (username, password)
+            with sqlite3.connect('demo6.db') as con:
+                cur = con.cursor()
+                cur.execute('select * from user where username = ?',(username,))
+                r = cur.fetchall()
+                if len(r) <= 0:
+                    flash({
+                        'error':'用户名错误'
+                    })
+                    return redirect('/login')
+                else:
+                    securityPassword = r[0][2]
+                    if not check_password_hash(securityPassword,password):
+                        flash({
+                            'error':'密码错误'
+                        })
+                        return (redirect('/login'))
+                    else:
+                        return '登陆成功%s--%s' % (username, password)
 
 
 @userbp.route('/regist', methods=['GET', 'POST'])
@@ -67,4 +85,16 @@ def regist():
             flash(error)
             return redirect('/regist')
         else:
-            return '成功注册'
+            with sqlite3.connect('demo6.db') as con:
+                cur = con.cursor()
+                cur.execute('select * from user where username = ?',(username,))
+                r = cur.fetchall()
+                if len(r)>0:
+                    flash('用户名已存在')
+                    return redirect('/regist')
+                else:
+                    securityPassword = generate_password_hash(password)
+                    cur.execute('insert into user (username,password) values(?,?)',(username,securityPassword))
+                    con.commit()
+                return '成功注册'
+

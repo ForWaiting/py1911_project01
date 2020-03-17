@@ -21,6 +21,21 @@ def create__app():
     app.register_blueprint(bookbp)
     app.register_blueprint(userbp)
 
+    # @app.before_first_request
+    # def first_request_d0_something():
+    #     import sqlite3
+    #     try:
+    #         con = sqlite3.connect('demo6.db')
+    #         cur = con.cursor()
+    #         cur.execute('DROP TABLE IF EXISTS user;')
+    #         cur.execute("CREATE TABLE user (  id INTEGER PRIMARY KEY AUTOINCREMENT,  username TEXT UNIQUE NOT NULL,  password TEXT NOT NULL, create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, is_admin INTEGER DEFAULT 0, is_active INTEGER DEFAULT 1 )")
+    #         con.commit()
+    #         cur.close()
+    #         con.close()
+    #     except Exception as e:
+    #         print(e)
+
+    # 404页面
     @app.errorhandler(404)
     def page_not_found(error):
         return render_template('404.html')
