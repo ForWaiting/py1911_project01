@@ -31,7 +31,7 @@ SECRET_KEY = 'y(4i%^o+_@738^8k&i)d+!8y)x*p$0ok5o8v0w#s)_ohlecy48'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -84,8 +84,13 @@ WSGI_APPLICATION = 'blog.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'NAME':'blog',
+        'USER':'root',
+        'PASSWORD':'123456',
+        # 'HOST':'localhost',
+        # 'POST':'3306'
     }
 }
 
