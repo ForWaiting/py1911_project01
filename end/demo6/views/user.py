@@ -118,9 +118,12 @@ def regist():
 
                         serUtil = TimedJSONWebSignatureSerializer(current_app.secret_key,expires_in=24*60*60)
                         serstr = serUtil.dumps({'user_id':user_id}).decode('utf-8')
-                        msg = Message(subject='你好，激活账户点击下方', recipients=[email])
-                        msg.html = "<a href='http://127.0.0.1:5000/active/%s' >点击激活</a>" % (serstr,)
-                        mail.send(msg)
+
+                        from tasks import send_email
+                        send_email.delay(email,serstr)
+                        # msg = Message(subject='你好，激活账户点击下方', recipients=[email])
+                        # msg.html = "<a href='http://127.0.0.1:5000/active/%s' >点击激活</a>" % (serstr,)
+                        # mail.send(msg)
 
                         con.commit()
                         return '成功注册,请前往邮箱激活账户'
