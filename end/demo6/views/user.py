@@ -7,8 +7,10 @@
 @Software: PyCharm
 """
 import sqlite3
-from flask import request, render_template, flash, redirect, Blueprint
+from flask import request, render_template, flash, redirect, Blueprint, current_app
 from werkzeug.security import generate_password_hash, check_password_hash
+from itsdangerous import TimedJSONWebSignatureSerializer,SignatureExpired,BadSignature
+import time
 
 userbp = Blueprint('user', __name__)
 
@@ -106,26 +108,41 @@ def regist():
                     return redirect('/regist')
                 else:
                     # 进行账户注册
-                    security_password = generate_password_hash(password)
-                    cur.execute('insert into user (email,password) values(?,?)', (email, security_password))
-                    con.commit()
-                    # 获取注册并未激活账户
-                    with sqlite3.connect('demo6.db') as con1:
-                        cur = con1.cursor()
-                        cur.execute('select * from user where email = ?', (email,))
-                        r = cur.fetchall()
-                        print('当前账户', r)
+                    try:
+                        security_password = generate_password_hash(password)
+                        cur.execute('insert into user (email,password) values(?,?)', (email, security_password))
+                        cur.execute('select id from user where email = ?', (email,))
+                        user_id = cur.fetchone()[0]
                         from flask_mail import Message
                         from .utils import mail
+
+                        serUtil = TimedJSONWebSignatureSerializer(current_app.secret_key,expires_in=24*60*60)
+                        serstr = serUtil.dumps({'user_id':user_id}).decode('utf-8')
                         msg = Message(subject='你好，激活账户点击下方', recipients=[email])
-                        msg.html = "<a href='http://127.0.0.1:5000/active/%s' >点击激活</a>" % (r[0][0],)
+                        msg.html = "<a href='http://127.0.0.1:5000/active/%s' >点击激活</a>" % (serstr,)
                         mail.send(msg)
+
+                        con.commit()
                         return '成功注册,请前往邮箱激活账户'
+                    except Exception as e:
+                        print(e)
+                        con.rollback()
+                        return '出异常了'
 # 对帐户进行查找激活
 @userbp.route('/active/<user_id>')
 def activeuser(user_id):
-    with sqlite3.connect('demo6.db') as con:
-        cur = con.cursor()
-        cur.execute('update user set is_active=1 where id = ?', (user_id,))
-        con.commit()
-    return redirect('/login')
+    try:
+        serUtil = TimedJSONWebSignatureSerializer(current_app.secret_key, expires_in=24 * 60 * 60)
+        user_id =  serUtil.loads(user_id)['user_id']
+
+        with sqlite3.connect('demo6.db') as con:
+            cur = con.cursor()
+            cur.execute('update user set is_active=1 where id = ?', (user_id,))
+            con.commit()
+        return redirect('/login')
+    except SignatureExpired:
+        return '超时'
+    except BadSignature:
+        return '密钥错误'
+    except Exception:
+        return '未知原因错误'
