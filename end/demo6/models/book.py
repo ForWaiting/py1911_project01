@@ -20,7 +20,7 @@ class Book(db.Model):
     id = db.Column('id',db.Integer,primary_key=True,autoincrement=True)
     name = db.Column('name',db.String(50),nullable=False,unique=True)
     # 定义外键
-    cid = db.Column('cid',db.ForeignKey('category.id'),nullable=False)
+    cid = db.Column('cid',db.ForeignKey('category.id',ondelete= 'CASCADE'),nullable=False)
     # 定义关系字段
     category = db.relationship('Category',backref='books')
 

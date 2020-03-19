@@ -20,6 +20,7 @@ def create_app():
     # 注册蓝图
     app.register_blueprint(bookbp)
     app.register_blueprint(userbp)
+    app.register_blueprint(adminbp)
 
 
     # @app.before_first_request

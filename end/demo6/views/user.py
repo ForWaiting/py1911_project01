@@ -7,10 +7,12 @@
 @Software: PyCharm
 """
 import sqlite3
-from flask import request, render_template, flash, redirect, Blueprint, current_app
+import time
+from datetime import datetime, timedelta
+from flask import request, render_template, flash, redirect, Blueprint, current_app, make_response,session
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import TimedJSONWebSignatureSerializer,SignatureExpired,BadSignature
-import time
+from models import *
 
 userbp = Blueprint('user', __name__)
 
@@ -71,9 +73,23 @@ def login():
                             })
                             return redirect('/login')
                         else:
-                            return '登陆成功%s--%s' % (email, password)
-
-
+                            next = request.args.get('next')
+                            if next:
+                                res = make_response(redirect(next))
+                                # res.set_cookie('user',email,expires=datetime.now()+timedelta(days=7))
+                                session['user'] = email
+                                return res
+                            else:
+                                res = make_response(redirect('/'))
+                                # res.set_cookie('user',email,expires=datetime.now()+timedelta(days=7))
+                                session['user'] = email
+                                return res
+@userbp.route('/logout')
+def logout():
+    res = make_response(redirect('/'))
+    # res.delete_cookie('user')
+    session.pop('user')
+    return res
 # 进行账户注册
 @userbp.route('/regist', methods=['GET', 'POST'])
 def regist():
@@ -149,3 +165,4 @@ def activeuser(user_id):
         return '密钥错误'
     except Exception:
         return '未知原因错误'
+
