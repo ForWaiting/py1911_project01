@@ -10,8 +10,8 @@
 # 1引入Flask
 from flask import Flask, render_template
 from views import *
-
-def create__app():
+from models import *
+def create_app():
     # 2构建Flask对象  一个WSGI应用  __name__ 为Flask寻找static以及templates 提供支持
     app = Flask(__name__)
     # 10 session 是存储在服务器上的加密信息 会将sessionid保存在cookie
@@ -58,4 +58,12 @@ def create__app():
     app.config['MAIL_DEFAULT_SENDER'] = '路飞<huangzhenfang2019@163.com>'
     # 设置邮箱实例
     mail.init_app(app)
+
+    # 配置数据库
+    # 配置数据库
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///demo6.db'
+    # 自动检测更新
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    db.init_app(app)
+    db.app =app
     return app

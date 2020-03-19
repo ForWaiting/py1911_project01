@@ -6,12 +6,25 @@
 @Email   : huangzhenfang2017@163.com
 @Software: PyCharm
 """
-from flask import render_template, flash,Blueprint
-
+from flask import render_template,Blueprint
+from models.book import *
 
 bookbp = Blueprint('books',__name__)
 
 @bookbp.route('/')
 def index():
-    bookList = [{'ID': 101, 'Name': 'Luffy'}, {'ID': 102, 'Name': 'Nami'}, {'ID': 103, 'Name': 'Zoro'}]
-    return render_template('index.html', bookList=bookList, u='hzf')
+
+    cs = Category.query.all()
+    return render_template('index.html', cs=cs)
+
+@bookbp.route('/categorys/<id>')
+def category(id):
+    c = Category.query.filter_by(id=id).first()
+    if c:
+        # 表关联查询
+        # bs = Book.query.filter_by(cid=id).all()
+        # 关系字段查询
+        bs = c.books
+        # print(bs[0].category)
+        return render_template('category.html',bs=bs)
+    return '书籍不存在'
