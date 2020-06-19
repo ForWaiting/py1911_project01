@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+
+
+{% block title %}
+    首页
+{% endblock %}
+
+{% block main %}
+      <img src="/static/img/index-banner.jpg" alt="" style="width:100%;height:100%;">
+        <h1>分类列表</h1>
+    <table class="table">
+        <tr><th>分类编号</th><th>分类名</th></tr>
+        {% for c in cs %}
+        <tr><td>{{c.id}}</td><td><a href="/categorys/{{c.id}}">{{c.name}}</a></td></tr>
+        {% endfor %}
+    </table>
+{% endblock %}
