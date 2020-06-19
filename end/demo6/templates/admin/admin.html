@@ -12,13 +12,13 @@ Admin后台
         <ul>
             <li><p>分类</p><ul>
                 {% for c in cs %}
-                <li>{{c.name}}<a href="/admin/category/delete/{{c.id}}">删除</a></li>
+                <li>{{c.id}}---{{c.name}}<a href="/admin/category/delete/{{c.id}}"> 删除</a></li>
                 {% endfor %}
                 <li><a href="/admin/category/add">添加分类</a></li>
             </ul></li>
             <li><p>图书</p><ul>
                 {% for b in bs %}
-                <li>{{b.name}}<a href="/admin/book/delete/{{b.id}}">删除</a></li>
+                <li>{{b.name}}<a href="/admin/book/delete/{{b.id}}"> 删除</a></li>
                 {% endfor %}
                 <li><a href="/admin/book/add">添加书籍</a></li>
             </ul></li>
